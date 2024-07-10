@@ -8,37 +8,6 @@ std::string gracz_znaczek;
 std::string komputer_znaczek;
 int starter;
 
-//std::string switchCase(int wybor) {
-//    switch (wybor) {
-//    case 1:
-//        return pola[0][0];
-//
-//    case 2:
-//        return pola[0][1];
-//
-//    case 3:
-//        return pola[0][2];
-//  
-//    case 4:
-//        return pola[1][0];
-//     
-//    case 5:
-//        return pola[1][1];
-//        
-//    case 6:
-//        return pola[1][2];
-//       
-//    case 7:
-//        return pola[2][0];
-//        
-//    case 8:
-//        return pola[2][1];
-//      
-//    case 9:
-//        return pola[2][2];
-//       
-//    }
-//}
 
 void plansza_init() {
 
@@ -78,6 +47,20 @@ void rysuj_plansze() {
     std::cout << std::endl;
 }
 
+void wykonaj_ruch(int pole, std::string znaczek) {
+    switch (pole) {
+    case 1: pola[0][0] = znaczek; break;
+    case 2: pola[0][1] = znaczek; break;
+    case 3: pola[0][2] = znaczek; break;
+    case 4: pola[1][0] = znaczek; break;
+    case 5: pola[1][1] = znaczek; break;
+    case 6: pola[1][2] = znaczek; break;
+    case 7: pola[2][0] = znaczek; break;
+    case 8: pola[2][1] = znaczek; break;
+    case 9: pola[2][2] = znaczek; break;
+    }
+}
+
 bool wygrana_checker(std::string znaczek) {
     //sprawdzanie pionowo
     for (int i = 0; i < 3; i++) {
@@ -91,7 +74,6 @@ bool wygrana_checker(std::string znaczek) {
             return true;
         }
     }
-
     //sprawdzenie po I przekątnej
     if (pola[0][0] == znaczek && pola[1][1] == znaczek && pola[2][2] == znaczek) {
         return true;
@@ -142,17 +124,7 @@ void gracz_ruch() {
         std::cout << "To pole jest już zajęte, wybierz inne.\n";
         std::cin >> pole;
     }
-    switch (pole) {
-    case 1: pola[0][0] = gracz_znaczek; break;
-    case 2: pola[0][1] = gracz_znaczek; break;
-    case 3: pola[0][2] = gracz_znaczek; break;
-    case 4: pola[1][0] = gracz_znaczek; break;
-    case 5: pola[1][1] = gracz_znaczek; break;
-    case 6: pola[1][2] = gracz_znaczek; break;
-    case 7: pola[2][0] = gracz_znaczek; break;
-    case 8: pola[2][1] = gracz_znaczek; break;
-    case 9: pola[2][2] = gracz_znaczek; break;
-    }
+    wykonaj_ruch(pole, gracz_znaczek);
     system("cls");
     plansza();
     rysuj_plansze();
@@ -163,17 +135,7 @@ void komputer_ruch() {
     while (!puste_pole_checker(pole)) {
         pole= rand() % 9 + 1;
     }
-    switch (pole) {
-    case 1: pola[0][0] = komputer_znaczek; break;
-    case 2: pola[0][1] = komputer_znaczek; break;
-    case 3: pola[0][2] = komputer_znaczek; break;
-    case 4: pola[1][0] = komputer_znaczek; break;
-    case 5: pola[1][1] = komputer_znaczek; break;
-    case 6: pola[1][2] = komputer_znaczek; break;
-    case 7: pola[2][0] = komputer_znaczek; break;
-    case 8: pola[2][1] = komputer_znaczek; break;
-    case 9: pola[2][2] = komputer_znaczek; break;
-    }
+    wykonaj_ruch(pole, komputer_znaczek);
     system("cls");
     plansza();
     std::cout << "Komputer wybrał pole "<<pole<<"!\n\n";
@@ -191,7 +153,7 @@ void menu() {
     }
     system("cls");
     std::string znaczek;
-    std::cout << "Jakim znaczkiem chcesz być? Wybierz x lub o\n";
+    std::cout << "Jakim znaczkiem chcesz być? Wybierz x lub o.\n";
     std::cin >> znaczek;
     while (znaczek != "o" && znaczek != "O" && znaczek != "x" && znaczek != "X") {
         std::cout << "Wpisałeś zły znaczek, spróbuj ponownie!\n";
@@ -227,14 +189,10 @@ void wyniki() {
         std::cout << "Remis!\n";
     }
 }
-
 void gameplay() {
     int kolej = starter;
     while (!wygrana_checker(komputer_znaczek)&&!wygrana_checker(gracz_znaczek)&&!remis_checker()) {
-        //std::cout << "dziala\n";
-        //std::cout << kolej << std::endl;
         if (kolej == 1) {
-            //std::cout << "dziala\n";
             gracz_ruch();
             kolej = 2;
         }
@@ -243,7 +201,6 @@ void gameplay() {
             kolej = 1;
         }
     }
-
 }
 
 int main()
