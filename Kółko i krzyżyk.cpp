@@ -61,6 +61,10 @@ void wykonaj_ruch(int pole, std::string znaczek) {
     }
 }
 
+void cofnij_ruch(int pole) {
+    wykonaj_ruch(pole, " ");
+}
+
 bool wygrana_checker(std::string znaczek) {
     //sprawdzanie pionowo
     for (int i = 0; i < 3; i++) {
@@ -133,49 +137,50 @@ void gracz_ruch() {
 void komputer_ruch() {
     int pole = rand() % 9 + 1;
     while (!puste_pole_checker(pole)) {
-        pole= rand() % 9 + 1;
+        pole = rand() % 9 + 1;
     }
     wykonaj_ruch(pole, komputer_znaczek);
     system("cls");
     plansza();
     std::cout << "Komputer wybrał pole "<<pole<<"!\n\n";
     rysuj_plansze();
-    
 }
 
-void menu() {
-    std::string y;
-    std::cout << "Witaj w grze kółko i krzyżyk!\nWciśnij Y, jeśli możemy zaczynać.\n";
-    std::cin >> y;
-    while(y != "Y" && y != "y") {
-        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\n";
-        std::cin >> y;
+void komputer_ruch_medium() {
+    //check czy komputer może wygrać w jednym ruchu
+    for (int p = 1; p < 10; p++ ) {
+        if (puste_pole_checker(p)) {
+            wykonaj_ruch(p, komputer_znaczek);
+            if (wygrana_checker(komputer_znaczek)) {
+                system("cls");
+                plansza();
+                std::cout << "Komputer wybrał pole " << p << "!\n\n";
+                rysuj_plansze();
+                return;
+            }
+            cofnij_ruch(p);    
+        }
+        
     }
-    system("cls");
-    std::string znaczek;
-    std::cout << "Jakim znaczkiem chcesz być? Wybierz x lub o.\n";
-    std::cin >> znaczek;
-    while (znaczek != "o" && znaczek != "O" && znaczek != "x" && znaczek != "X") {
-        std::cout << "Wpisałeś zły znaczek, spróbuj ponownie!\n";
-        std::cin >> znaczek;
+
+    //check czy gracz może wygrać w jednym ruchu
+    for (int p=1; p < 10; p++) {
+        if (puste_pole_checker(p)) {
+            wykonaj_ruch(p, komputer_znaczek);
+            if (wygrana_checker(gracz_znaczek)) {
+                cofnij_ruch(p);
+                wykonaj_ruch(p, komputer_znaczek);
+                std::cout << "Komputer wybrał pole " << p << "!\n\n";
+                rysuj_plansze();
+                return;
+            }
+            cofnij_ruch(p);
+        }
+        
     }
-    if (znaczek == "x" || znaczek == "X") {
-        komputer_znaczek = "o";
-    }
-    else if (znaczek == "o" || znaczek == "O") {
-        komputer_znaczek = "x";
-    }
-    gracz_znaczek = znaczek;
-    std::cout << "Kto zaczyna? Wybierz odpowiedni numer:\n1 - Ty\n2 - Komputer\n";
-    std::cin >> starter;
-    while (starter != 1 && starter != 2) {
-        std::cout<<"Nie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
-        std::cin >> starter;
-    }
-    system("cls");
-    plansza_init();
-    zeruj_tablice();
-    rysuj_plansze();
+
+    //defaultowo ruch z generatora
+    komputer_ruch();
 }
 
 void wyniki() {
@@ -189,8 +194,12 @@ void wyniki() {
         std::cout << "Remis!\n";
     }
 }
+
 void gameplay() {
     int kolej = starter;
+    plansza_init();
+    zeruj_tablice();
+    rysuj_plansze();
     while (!wygrana_checker(komputer_znaczek)&&!wygrana_checker(gracz_znaczek)&&!remis_checker()) {
         if (kolej == 1) {
             gracz_ruch();
@@ -203,12 +212,78 @@ void gameplay() {
     }
 }
 
+void gameplay_medium() {
+    int kolej = starter;
+    plansza_init();
+    zeruj_tablice();
+    rysuj_plansze();
+    while (!wygrana_checker(komputer_znaczek) && !wygrana_checker(gracz_znaczek) && !remis_checker()) {
+        if (kolej == 1) {
+            gracz_ruch();
+            kolej = 2;
+        }
+        else if (kolej == 2) {
+            komputer_ruch_medium();
+            kolej = 1;
+        }
+    }
+}
+
+void menu() {
+    std::string y;
+    std::cout << "Witaj w grze kółko i krzyżyk!\nWciśnij Y, jeśli możemy zaczynać.\n";
+    std::cin >> y;
+    while (y != "Y" && y != "y") {
+        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\n";
+        std::cin >> y;
+    }
+    system("cls");
+
+    int level;
+    std::cout << "Wybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
+    std::cin >> level;
+    while (level != 1 && level != 2) {
+        std::cout << "Nie ma takiego poziomu trudności. Wybierz poprawny numer:\n1 - Łatwy\n2 - Trudny\n";
+        std::cin >> level;
+    }
+
+    std::string znaczek;
+    std::cout << "\nJakim znaczkiem chcesz być? Wybierz x lub o.\n";
+    std::cin >> znaczek;
+    while (znaczek != "o" && znaczek != "O" && znaczek != "x" && znaczek != "X") {
+        std::cout << "Wpisałeś zły znaczek, spróbuj ponownie!\n";
+        std::cin >> znaczek;
+    }
+    if (znaczek == "x" || znaczek == "X") {
+        komputer_znaczek = "o";
+    }
+    else if (znaczek == "o" || znaczek == "O") {
+        komputer_znaczek = "x";
+    }
+    
+    gracz_znaczek = znaczek;
+    std::cout << "\nKto zaczyna? Wybierz odpowiedni numer:\n1 - Ty\n2 - Komputer\n";
+    std::cin >> starter;
+    while (starter != 1 && starter != 2) {
+        std::cout << "Nie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
+        std::cin >> starter;
+    }
+    system("cls");
+
+    if (level == 1) {
+        gameplay();
+    }
+    else if (level == 2) {
+        gameplay_medium();
+    }
+
+}
+
 int main()
 {
     setlocale(LC_CTYPE, "Polish");
     srand(time(0));
     menu();
-    gameplay();
     wyniki();
 }
 
