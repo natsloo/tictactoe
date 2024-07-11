@@ -85,17 +85,13 @@ void alltime_stats(){
 }
 
 void plansza_init() {
-
+    if (level == 1) {
+        std::cout << "Poziom trudności: łatwy.\n\n";
+    }
+    else if (level == 2) {
+        std::cout << "Poziom trudności: trudny.\n\n";
+    }
     std::cout << "Tak wygląda rozkład planszy.\n\n";
-    std::cout << " 1 | 2 | 3 " << std::endl;
-    std::cout << "___|___|___" << std::endl;
-    std::cout << " 4 | 5 | 6 " << std::endl;
-    std::cout << "___|___|___" << std::endl;
-    std::cout << "   |   |" << std::endl;
-    std::cout << " 7 | 8 | 9 \n\n" << std::endl;
-}
-
-void plansza() {
     std::cout << " 1 | 2 | 3 " << std::endl;
     std::cout << "___|___|___" << std::endl;
     std::cout << " 4 | 5 | 6 " << std::endl;
@@ -217,7 +213,7 @@ void gracz_ruch() {
     }
     wykonaj_ruch(pole, gracz_znaczek);
     system("cls");
-    plansza();
+    plansza_init();
     rysuj_plansze();
 }
 
@@ -228,7 +224,7 @@ void komputer_ruch() {
     }
     wykonaj_ruch(pole, komputer_znaczek);
     system("cls");
-    plansza();
+    plansza_init();
     std::cout << "Komputer wybrał pole "<<pole<<"!\n\n";
     rysuj_plansze();
 }
@@ -240,7 +236,7 @@ void komputer_ruch_medium() {
             wykonaj_ruch(p, komputer_znaczek);
             if (wygrana_checker(komputer_znaczek)) {
                 system("cls");
-                plansza();
+                plansza_init();
                 std::cout << "Komputer wybrał pole " << p << "!\n\n";
                 rysuj_plansze();
                 return;
@@ -258,7 +254,7 @@ void komputer_ruch_medium() {
                 cofnij_ruch(p);
                 wykonaj_ruch(p, komputer_znaczek);
                 system("cls");
-                plansza();
+                plansza_init();
                 std::cout << "Komputer wybrał pole " << p << "!\n\n";
                 rysuj_plansze();
                 return;
@@ -312,12 +308,6 @@ void wyniki() {
 
 void gameplay() {
     int kolej = starter;
-    if (level == 1) {
-        std::cout << "Poziom trudności: łatwy.\n\n";
-    }
-    else if (level == 2) {
-        std::cout << "Poziom trudności: trudny.\n\n";
-    }
     plansza_init();
     zeruj_tablice();
     rysuj_plansze();
@@ -465,7 +455,7 @@ void menu() {
         exit(0);
     }
     else if (tak == "y" || tak == "Y") {
-        std::cout << "\n";
+        system("cls");
         menu();
     }
     else if (tak == "S" || tak == "s") {
