@@ -1,6 +1,9 @@
 ﻿#include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <thread>
+#include <chrono> // Potrzebne do std::chrono::seconds
 
 // Definicje kodów ANSI dla kolorów tekstu
 #define ANSI_COLOR_RESET   "\x1b[0m"
@@ -17,7 +20,69 @@ std::string pola[3][3];
 std::string gracz_znaczek;
 std::string komputer_znaczek;
 int starter;
+int level;
 
+int e_sesja_wygrane=0;
+int e_sesja_przegrane=0;
+int e_sesja_remisy=0;
+
+int t_sesja_wygrane = 0;
+int t_sesja_przegrane = 0;
+int t_sesja_remisy = 0;
+
+int e_alltime_wygrane;
+int e_alltime_przegrane;
+int e_alltime_remisy;
+
+int t_alltime_wygrane;
+int t_alltime_przegrane;
+int t_alltime_remisy;
+
+void sleep_seconds(int seconds) {
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+}
+
+void load_alltime_stats() {
+    std::ifstream loader("stats.txt");
+    if (loader.is_open()) {
+        loader >> e_alltime_wygrane >> e_alltime_przegrane >> e_alltime_remisy;
+        loader >> t_alltime_wygrane >> t_alltime_przegrane >> t_alltime_remisy;
+        loader.close();
+    }
+
+}
+
+void save_alltime_stats() {
+    std::ofstream saver("stats.txt");
+    if (saver.is_open()) {
+        saver << e_alltime_wygrane << " " << e_alltime_przegrane <<" "<< e_alltime_remisy<<"\n";
+        saver << t_alltime_wygrane << " " << t_alltime_przegrane << " " << t_alltime_remisy;
+        saver.close();
+    }
+}
+
+void sesja_stats() {
+        std::cout << "Statystyki tej sesji - tryb łatwy:\n";
+        std::cout << "Wygrane: " << e_sesja_wygrane << std::endl;
+        std::cout << "Przegrane: " << e_sesja_przegrane << std::endl;
+        std::cout << "Remisy: " << e_sesja_remisy << std::endl;
+        std::cout << "\nStatystyki tej sesji - tryb trudny:\n";
+        std::cout << "Wygrane: " << t_sesja_wygrane << std::endl;
+        std::cout << "Przegrane: " << t_sesja_przegrane << std::endl;
+        std::cout << "Remisy: " << t_sesja_remisy << std::endl;
+        std::cout<<std::endl;
+}
+void alltime_stats(){
+        std::cout << "Wszystkie statystyki - tryb łatwy:\n";
+        std::cout << "Wygrane: " << e_alltime_wygrane << std::endl;
+        std::cout << "Przegrane: " << e_alltime_przegrane << std::endl;
+        std::cout << "Remisy: " << e_alltime_remisy << std::endl;
+        std::cout << "\nWszystkie statystyki - tryb trudny:\n";
+        std::cout << "Wygrane: " << t_alltime_wygrane << std::endl;
+        std::cout << "Przegrane: " << t_alltime_przegrane << std::endl;
+        std::cout << "Remisy: " << t_alltime_remisy << std::endl;
+        std::cout << std::endl;
+}
 
 void plansza_init() {
 
@@ -208,19 +273,51 @@ void komputer_ruch_medium() {
 }
 
 void wyniki() {
-    if (wygrana_checker(gracz_znaczek)) {
-        std::cout <<ANSI_COLOR_GREEN<< "Gratulacje! Wygrałeś! :D\n"<<ANSI_COLOR_RESET;
+    if (level == 1) {
+        if (wygrana_checker(gracz_znaczek)) {
+            std::cout << ANSI_COLOR_GREEN << "Gratulacje! Wygrałeś! :D\n" << ANSI_COLOR_RESET;
+            e_sesja_wygrane++;
+            e_alltime_wygrane++;
+        }
+        else if (wygrana_checker(komputer_znaczek)) {
+            std::cout << ANSI_COLOR_RED << "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
+            e_sesja_przegrane++;
+            e_alltime_przegrane++;
+        }
+        else if (remis_checker()) {
+            std::cout << ANSI_COLOR_YELLOW << "Remis!\n" << ANSI_COLOR_RESET;
+            e_sesja_remisy++;
+            e_alltime_remisy++;
+        }
     }
-    else if (wygrana_checker(komputer_znaczek)) {
-        std::cout <<ANSI_COLOR_RED<< "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
+    else if (level == 2) {
+        if (wygrana_checker(gracz_znaczek)) {
+            std::cout << ANSI_COLOR_GREEN << "Gratulacje! Wygrałeś! :D\n" << ANSI_COLOR_RESET;
+            t_sesja_wygrane++;
+            t_alltime_wygrane++;
+        }
+        else if (wygrana_checker(komputer_znaczek)) {
+            std::cout << ANSI_COLOR_RED << "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
+            t_sesja_przegrane++;
+            t_alltime_przegrane++;
+        }
+        else if (remis_checker()) {
+            std::cout << ANSI_COLOR_YELLOW << "Remis!\n" << ANSI_COLOR_RESET;
+            t_sesja_remisy++;
+            t_alltime_remisy++;
+        }
     }
-    else if (remis_checker()) {
-        std::cout << ANSI_COLOR_YELLOW<<"Remis!\n" << ANSI_COLOR_RESET;
-    }
+    save_alltime_stats();
 }
 
 void gameplay() {
     int kolej = starter;
+    if (level == 1) {
+        std::cout << "Poziom trudności: łatwy.\n\n";
+    }
+    else if (level == 2) {
+        std::cout << "Poziom trudności: trudny.\n\n";
+    }
     plansza_init();
     zeruj_tablice();
     rysuj_plansze();
@@ -253,6 +350,34 @@ void gameplay_medium() {
     }
 }
 
+void stats_viewer() {
+    load_alltime_stats();
+    system("cls");
+    std::cout << "Wybierz, jakie statystyki chcesz zobaczyć:\n1 - Statystyki bieżącej sesji\n2 - Łączne statystyki wszystkich gier dotychczas\n3 - 1+2\n";
+    int s;
+    while (!(std::cin >> s) || s < 1 || s > 3) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Nie ma takich statystyk. Wybierz liczbę od 1 do 3.\n";
+    }
+    if (s == 1) {
+        system("cls");
+        sesja_stats();
+    }
+    else if (s == 2) {
+        system("cls");
+        alltime_stats();
+    }
+    else if (s == 3) {
+        system("cls");
+        sesja_stats();
+        std::cout << std::endl;
+        alltime_stats();
+    }
+    std::cout << "\nNaciśnij dowolny klawisz, by wrócić do menu.\n";
+    system("pause");
+}
+
 void menu() {
    
     std::string znaczek;
@@ -272,7 +397,6 @@ void menu() {
 
         gracz_znaczek = "o";
     }
-
     std::string czy;
     std::cout << "\nCzy chcesz wybrać kolor swojego znaczka?\nWciśnij Y, by przejść do wyboru koloru lub N, by kontynować z kolorem domyślnym.\n";
     std::cin >> czy;
@@ -298,7 +422,9 @@ void menu() {
         wybierz_kolor(kolor, gracz_znaczek);
         std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
     }
-    int level;
+    if (czy == "n" || czy == "N") {
+        std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
+    }
     std::cout << "\nWybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
     while (!(std::cin >> level) || level != 1 && level != 2) {
         std::cin.clear();
@@ -310,7 +436,7 @@ void menu() {
     while (!(std::cin >> starter) || starter != 1 && starter != 2) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Nie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
+        std::cout << "\tNie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
 
     }
 
@@ -325,34 +451,51 @@ void menu() {
 
     wyniki();
 
-    std::cout << "\nCzy chciałbyś zagrać jeszcze raz? Jeśli tak, wybierz Y, jeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
+    std::cout << "\nCzy chciałbyś zagrać jeszcze raz? Jeśli tak, wybierz Y.\nJeśli chcesz zakończyć rozgrywkę, wybierz N.\nJeśli chcesz przejść do statystyk, wybiesz S.\n";
     std::string tak;
     std::cin >> tak;
-    while (tak != "y" && tak != "Y" && tak != "n" && tak != "N") {
-        std::cout << "Wybierz Y, jeśli chcesz zagrać jeszcze raz. Jeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
+    while (tak != "y" && tak != "Y" && tak != "n" && tak != "N" && tak != "S" && tak != "s") {
+        std::cout << "Wybierz Y, jeśli chcesz zagrać jeszcze raz.\nJeśli chcesz przejść do statystyk, wybiesz S.\nJeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
         std::cin >> tak;
     }
     if (tak == "n" || tak == "N") {
-        std::cout << ANSI_COLOR_GREEN<<"\n\tDzięki za grę!\n\tDo zobaczenia następnym razem!\n"<<ANSI_COLOR_RESET;
+        system("cls");
+        std::cout << ANSI_COLOR_GREEN<<"\n\n\tDzięki za grę!\n\tDo zobaczenia następnym razem!\n\n"<<ANSI_COLOR_RESET;
+        sleep_seconds(1);
         exit(0);
     }
     else if (tak == "y" || tak == "Y") {
         std::cout << "\n";
         menu();
     }
+    else if (tak == "S" || tak == "s") {
+        stats_viewer();
+    }
 
 }
 
 void menu_init() {
+    system("cls");
     std::string y;
-    std::cout << "Witaj w grze kółko i krzyżyk!\nWciśnij Y, jeśli możemy zaczynać.\n";
+    std::cout << ANSI_COLOR_MAGENTA<<"Witaj w grze kółko i krzyżyk!"<<ANSI_COLOR_RESET<<"\nWciśnij Y, jeśli możemy zaczynać.\nWciśnij S, żeby zobaczyć statystyki.\nWciśnij N, żeby wyjść z gry.\n";
     std::cin >> y;
-    while (y != "Y" && y != "y") {
-        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\n";
+    while (y != "Y" && y != "y" && y != "s" && y != "S" && y != "n" && y != "N") {
+        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\nWciśnij S, żeby zobaczyć statystyki.\nWciśnij N, żeby wyjść z gry.\n";
         std::cin >> y;
     }
-    system("cls");
-    menu();
+    if (y == "Y" || y == "y") {
+        system("cls");
+        menu();
+    }
+    else if (y == "S" || y == "s") {
+        stats_viewer();
+    }
+    else if (y == "n" || y == "N") {
+        system("cls");
+        std::cout << ANSI_COLOR_GREEN << "\n\n\tDo zobaczenia następnym razem!\n\n" << ANSI_COLOR_RESET;
+        sleep_seconds(1);
+        exit(0);
+    }
 }
 
 
@@ -360,7 +503,10 @@ int main()
 {
     setlocale(LC_CTYPE, "Polish");
     srand(time(0));
-    menu_init();
+    load_alltime_stats;
+    while (true) {
+        menu_init();
+    }
     
 }
 
