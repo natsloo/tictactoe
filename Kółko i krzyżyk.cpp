@@ -254,26 +254,9 @@ void gameplay_medium() {
 }
 
 void menu() {
-    std::string y;
-    std::cout << "Witaj w grze kółko i krzyżyk!\nWciśnij Y, jeśli możemy zaczynać.\n";
-    std::cin >> y;
-    while (y != "Y" && y != "y") {
-        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\n";
-        std::cin >> y;
-    }
-    system("cls");
-
-    int level;
-    std::cout << "Wybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
-    while (!(std::cin >> level) || level != 1 && level != 2) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Nie ma takiego poziomu trudności. Wybierz poprawny numer:\n1 - Łatwy\n2 - Trudny\n";
-        
-    }
-
+   
     std::string znaczek;
-    std::cout << "\nJakim znaczkiem chcesz być? Wybierz x lub o.\n";
+    std::cout << "Jakim znaczkiem chcesz być? Wybierz x lub o.\n";
     std::cin >> znaczek;
     while (znaczek != "o" && znaczek != "O" && znaczek != "x" && znaczek != "X") {
         std::cout << "Wpisałeś zły znaczek, spróbuj ponownie!\n";
@@ -289,7 +272,7 @@ void menu() {
 
         gracz_znaczek = "o";
     }
-    
+
     std::string czy;
     std::cout << "\nCzy chcesz wybrać kolor swojego znaczka?\nWciśnij Y, by przejść do wyboru koloru lub N, by kontynować z kolorem domyślnym.\n";
     std::cin >> czy;
@@ -313,16 +296,24 @@ void menu() {
             std::cout << "Nie ma takiego koloru. Wybierz liczbę od 1 do 6.\n";
         }
         wybierz_kolor(kolor, gracz_znaczek);
-        std::cout <<"\n Twój znaczek to: " <<gracz_znaczek<<"!\n";
+        std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
     }
-    
+    int level;
+    std::cout << "\nWybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
+    while (!(std::cin >> level) || level != 1 && level != 2) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Nie ma takiego poziomu trudności. Wybierz poprawny numer:\n1 - Łatwy\n2 - Trudny\n";
+    }
+
     std::cout << "\nKto zaczyna? Wybierz odpowiedni numer:\n1 - Ty\n2 - Komputer\n";
     while (!(std::cin >> starter) || starter != 1 && starter != 2) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Nie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
-        
+
     }
+
     system("cls");
 
     if (level == 1) {
@@ -332,14 +323,45 @@ void menu() {
         gameplay_medium();
     }
 
+    wyniki();
+
+    std::cout << "\nCzy chciałbyś zagrać jeszcze raz? Jeśli tak, wybierz Y, jeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
+    std::string tak;
+    std::cin >> tak;
+    while (tak != "y" && tak != "Y" && tak != "n" && tak != "N") {
+        std::cout << "Wybierz Y, jeśli chcesz zagrać jeszcze raz. Jeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
+        std::cin >> tak;
+    }
+    if (tak == "n" || tak == "N") {
+        std::cout << ANSI_COLOR_GREEN<<"\n\tDzięki za grę!\n\tDo zobaczenia następnym razem!\n"<<ANSI_COLOR_RESET;
+        exit(0);
+    }
+    else if (tak == "y" || tak == "Y") {
+        std::cout << "\n";
+        menu();
+    }
+
 }
+
+void menu_init() {
+    std::string y;
+    std::cout << "Witaj w grze kółko i krzyżyk!\nWciśnij Y, jeśli możemy zaczynać.\n";
+    std::cin >> y;
+    while (y != "Y" && y != "y") {
+        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\n";
+        std::cin >> y;
+    }
+    system("cls");
+    menu();
+}
+
 
 int main()
 {
     setlocale(LC_CTYPE, "Polish");
     srand(time(0));
-    menu();
-    wyniki();
+    menu_init();
+    
 }
 
 
