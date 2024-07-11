@@ -2,6 +2,16 @@
 #include <cstdlib>
 #include <ctime>
 
+// Definicje kodów ANSI dla kolorów tekstu
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_BLACK   "\x1b[30m"
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_WHITE   "\x1b[37m"
 
 std::string pola[3][3];
 std::string gracz_znaczek;
@@ -58,6 +68,18 @@ void wykonaj_ruch(int pole, std::string znaczek) {
     case 7: pola[2][0] = znaczek; break;
     case 8: pola[2][1] = znaczek; break;
     case 9: pola[2][2] = znaczek; break;
+    }
+}
+
+void wybierz_kolor(int wybór, std::string &znaczek) {
+    switch (wybór) {
+    case 1: znaczek = ANSI_COLOR_RED + znaczek + ANSI_COLOR_RESET; break;
+    case 2: znaczek = ANSI_COLOR_GREEN + znaczek + ANSI_COLOR_RESET; break;
+    case 3: znaczek = ANSI_COLOR_YELLOW + znaczek + ANSI_COLOR_RESET; break;
+    case 4: znaczek = ANSI_COLOR_BLUE + znaczek + ANSI_COLOR_RESET; break;
+    case 5: znaczek = ANSI_COLOR_MAGENTA + znaczek + ANSI_COLOR_RESET; break;
+    case 6: znaczek = ANSI_COLOR_CYAN + znaczek + ANSI_COLOR_RESET; break;
+    default: znaczek = ANSI_COLOR_WHITE + znaczek + ANSI_COLOR_RESET; break;
     }
 }
 
@@ -166,10 +188,12 @@ void komputer_ruch_medium() {
     //check czy gracz może wygrać w jednym ruchu
     for (int p=1; p < 10; p++) {
         if (puste_pole_checker(p)) {
-            wykonaj_ruch(p, komputer_znaczek);
+            wykonaj_ruch(p, gracz_znaczek);
             if (wygrana_checker(gracz_znaczek)) {
                 cofnij_ruch(p);
                 wykonaj_ruch(p, komputer_znaczek);
+                system("cls");
+                plansza();
                 std::cout << "Komputer wybrał pole " << p << "!\n\n";
                 rysuj_plansze();
                 return;
@@ -185,13 +209,13 @@ void komputer_ruch_medium() {
 
 void wyniki() {
     if (wygrana_checker(gracz_znaczek)) {
-        std::cout << "Gratulacje! Wygrałeś! :D\n";
+        std::cout <<ANSI_COLOR_GREEN<< "Gratulacje! Wygrałeś! :D\n"<<ANSI_COLOR_RESET;
     }
     else if (wygrana_checker(komputer_znaczek)) {
-        std::cout << "Tym razem komputer okazał się lepszy :(\n";
+        std::cout <<ANSI_COLOR_RED<< "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
     }
     else if (remis_checker()) {
-        std::cout << "Remis!\n";
+        std::cout << ANSI_COLOR_YELLOW<<"Remis!\n" << ANSI_COLOR_RESET;
     }
 }
 
@@ -241,10 +265,11 @@ void menu() {
 
     int level;
     std::cout << "Wybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
-    std::cin >> level;
-    while (level != 1 && level != 2) {
+    while (!(std::cin >> level) || level != 1 && level != 2) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Nie ma takiego poziomu trudności. Wybierz poprawny numer:\n1 - Łatwy\n2 - Trudny\n";
-        std::cin >> level;
+        
     }
 
     std::string znaczek;
@@ -256,17 +281,47 @@ void menu() {
     }
     if (znaczek == "x" || znaczek == "X") {
         komputer_znaczek = "o";
+
+        gracz_znaczek = "x";
     }
     else if (znaczek == "o" || znaczek == "O") {
         komputer_znaczek = "x";
+
+        gracz_znaczek = "o";
     }
     
-    gracz_znaczek = znaczek;
+    std::string czy;
+    std::cout << "\nCzy chcesz wybrać kolor swojego znaczka?\nWciśnij Y, by przejść do wyboru koloru lub N, by kontynować z kolorem domyślnym.\n";
+    std::cin >> czy;
+    while (czy != "n" && czy != "N" && czy != "y" && czy != "Y") {
+        std::cout << "Wciśnij Y, by przejść do wyboru koloru lub N, by kontynuować z kolorem domyślnym.\n";
+        std::cin >> czy;
+    }
+    if (czy == "y" || czy == "Y") {
+        system("cls");
+        int kolor;
+        std::cout << "Wybierz kolor:\n";
+        std::cout << ANSI_COLOR_RED << "1 - Czerwony" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_GREEN << "2 - Zielony" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_YELLOW << "3 - Żółty" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_BLUE << "4 - Niebieski" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_MAGENTA << "5 - Magenta" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_CYAN << "6 - Cyjan" << ANSI_COLOR_RESET << "\n";
+        while (!(std::cin >> kolor) || kolor < 1 || kolor>6) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Nie ma takiego koloru. Wybierz liczbę od 1 do 6.\n";
+        }
+        wybierz_kolor(kolor, gracz_znaczek);
+        std::cout <<"\n Twój znaczek to: " <<gracz_znaczek<<"!\n";
+    }
+    
     std::cout << "\nKto zaczyna? Wybierz odpowiedni numer:\n1 - Ty\n2 - Komputer\n";
-    std::cin >> starter;
-    while (starter != 1 && starter != 2) {
+    while (!(std::cin >> starter) || starter != 1 && starter != 2) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Nie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
-        std::cin >> starter;
+        
     }
     system("cls");
 
