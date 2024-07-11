@@ -22,9 +22,9 @@ std::string komputer_znaczek;
 int starter;
 int level;
 
-int e_sesja_wygrane=0;
-int e_sesja_przegrane=0;
-int e_sesja_remisy=0;
+int e_sesja_wygrane = 0;
+int e_sesja_przegrane = 0;
+int e_sesja_remisy = 0;
 
 int t_sesja_wygrane = 0;
 int t_sesja_przegrane = 0;
@@ -49,14 +49,13 @@ void load_alltime_stats() {
         loader >> t_alltime_wygrane >> t_alltime_przegrane >> t_alltime_remisy;
         loader.close();
     }
-
 }
 
 void save_alltime_stats() {
     std::ofstream saver("stats.txt");
     if (saver.is_open()) {
-        saver << e_alltime_wygrane << " " << e_alltime_przegrane <<" "<< e_alltime_remisy<<"\n";
-        saver << t_alltime_wygrane << " " << t_alltime_przegrane << " " << t_alltime_remisy;
+        saver << e_alltime_wygrane << " " << e_alltime_przegrane << " " << e_alltime_remisy << "\n";
+        saver << t_alltime_wygrane << " " << t_alltime_przegrane << " " << t_alltime_remisy << "\n";
         saver.close();
     }
 }
@@ -404,10 +403,14 @@ void menu() {
         std::cout << ANSI_COLOR_BLUE << "4 - Niebieski" << ANSI_COLOR_RESET << "\n";
         std::cout << ANSI_COLOR_MAGENTA << "5 - Magenta" << ANSI_COLOR_RESET << "\n";
         std::cout << ANSI_COLOR_CYAN << "6 - Cyjan" << ANSI_COLOR_RESET << "\n";
-        while (!(std::cin >> kolor) || kolor < 1 || kolor>6) {
+        std::cout << "7 - Kolor losowy\n";
+        while (!(std::cin >> kolor) || kolor < 1 || kolor>7) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Nie ma takiego koloru. Wybierz liczbę od 1 do 6.\n";
+        }
+        if (kolor == 7) {
+            kolor = rand() & 6 + 1;
         }
         wybierz_kolor(kolor, gracz_znaczek);
         std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
