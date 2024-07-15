@@ -61,36 +61,36 @@ void save_alltime_stats() {
 }
 
 void sesja_stats() {
-        std::cout << "Statystyki tej sesji - tryb łatwy:\n";
-        std::cout << "Wygrane: " << e_sesja_wygrane << std::endl;
-        std::cout << "Przegrane: " << e_sesja_przegrane << std::endl;
-        std::cout << "Remisy: " << e_sesja_remisy << std::endl;
-        std::cout << "\nStatystyki tej sesji - tryb trudny:\n";
-        std::cout << "Wygrane: " << t_sesja_wygrane << std::endl;
-        std::cout << "Przegrane: " << t_sesja_przegrane << std::endl;
-        std::cout << "Remisy: " << t_sesja_remisy << std::endl;
+        std::cout << "Stats from this session - easy:\n";
+        std::cout << "Wins: " << e_sesja_wygrane << std::endl;
+        std::cout << "Losses: " << e_sesja_przegrane << std::endl;
+        std::cout << "Draws: " << e_sesja_remisy << std::endl;
+        std::cout << "\nStats from this session - hard:\n";
+        std::cout << "Wins: " << t_sesja_wygrane << std::endl;
+        std::cout << "Losses: " << t_sesja_przegrane << std::endl;
+        std::cout << "Draws: " << t_sesja_remisy << std::endl;
         std::cout<<std::endl;
 }
 void alltime_stats(){
-        std::cout << "Wszystkie statystyki - tryb łatwy:\n";
-        std::cout << "Wygrane: " << e_alltime_wygrane << std::endl;
-        std::cout << "Przegrane: " << e_alltime_przegrane << std::endl;
-        std::cout << "Remisy: " << e_alltime_remisy << std::endl;
-        std::cout << "\nWszystkie statystyki - tryb trudny:\n";
-        std::cout << "Wygrane: " << t_alltime_wygrane << std::endl;
-        std::cout << "Przegrane: " << t_alltime_przegrane << std::endl;
-        std::cout << "Remisy: " << t_alltime_remisy << std::endl;
+        std::cout << "Alltime stats - easy:\n";
+        std::cout << "Wins: " << e_alltime_wygrane << std::endl;
+        std::cout << "Losses: " << e_alltime_przegrane << std::endl;
+        std::cout << "Draws: " << e_alltime_remisy << std::endl;
+        std::cout << "\nAlltime stats - hard:\n";
+        std::cout << "Wins: " << t_alltime_wygrane << std::endl;
+        std::cout << "Losses: " << t_alltime_przegrane << std::endl;
+        std::cout << "Draws: " << t_alltime_remisy << std::endl;
         std::cout << std::endl;
 }
 
 void plansza_init() {
     if (level == 1) {
-        std::cout << "Poziom trudności: łatwy.\n\n";
+        std::cout << "Level: easy.\n\n";
     }
     else if (level == 2) {
-        std::cout << "Poziom trudności: trudny.\n\n";
+        std::cout << "Level: hard.\n\n";
     }
-    std::cout << "Tak wygląda rozkład planszy.\n\n";
+    std::cout << "This is what the board layout looks like:\n\n";
     std::cout << " 1 | 2 | 3 " << std::endl;
     std::cout << "___|___|___" << std::endl;
     std::cout << " 4 | 5 | 6 " << std::endl;
@@ -200,14 +200,14 @@ bool puste_pole_checker(int pole) {
 
 void gracz_ruch() {
     int pole;
-    std::cout << "Twój ruch! Wybierz pole.\n";
+    std::cout << "Your move! Choose a field.\n";
     std::cin >> pole;
     while (pole < 1 || pole > 9) {
-        std::cout << "Nie ma takiego pola. Wybierz pole między 1 a 9.\n";
+        std::cout << "No such filed exists. Choose a number between 1 and 9.\n";
         std::cin >> pole;
     }
     while (!puste_pole_checker(pole)) {
-        std::cout << "To pole jest już zajęte, wybierz inne.\n";
+        std::cout << "This field is already taken. Choose another one.\n";
         std::cin >> pole;
     }
     wykonaj_ruch(pole, gracz_znaczek);
@@ -224,7 +224,7 @@ void komputer_ruch() {
     wykonaj_ruch(pole, komputer_znaczek);
     system("cls");
     plansza_init();
-    std::cout << "Komputer wybrał pole "<<pole<<"!\n\n";
+    std::cout << "The computer has chosen filed number "<<pole<<"!\n\n";
     rysuj_plansze();
 }
 
@@ -236,7 +236,7 @@ void komputer_ruch_medium() {
             if (wygrana_checker(komputer_znaczek)) {
                 system("cls");
                 plansza_init();
-                std::cout << "Komputer wybrał pole " << p << "!\n\n";
+                std::cout << "The computer has chosen filed number " << p << "!\n\n";
                 rysuj_plansze();
                 return;
             }
@@ -254,7 +254,7 @@ void komputer_ruch_medium() {
                 wykonaj_ruch(p, komputer_znaczek);
                 system("cls");
                 plansza_init();
-                std::cout << "Komputer wybrał pole " << p << "!\n\n";
+                std::cout << "The computer has chosen filed number " << p << "!\n\n";
                 rysuj_plansze();
                 return;
             }
@@ -270,34 +270,34 @@ void komputer_ruch_medium() {
 void wyniki() {
     if (level == 1) {
         if (wygrana_checker(gracz_znaczek)) {
-            std::cout << ANSI_COLOR_GREEN << "Gratulacje! Wygrałeś! :D\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_GREEN << "Congrats! You've won! :D\n" << ANSI_COLOR_RESET;
             e_sesja_wygrane++;
             e_alltime_wygrane++;
         }
         else if (wygrana_checker(komputer_znaczek)) {
-            std::cout << ANSI_COLOR_RED << "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_RED << "This time the computer was better :(\n" << ANSI_COLOR_RESET;
             e_sesja_przegrane++;
             e_alltime_przegrane++;
         }
         else if (remis_checker()) {
-            std::cout << ANSI_COLOR_YELLOW << "Remis!\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_YELLOW << "Draw!\n" << ANSI_COLOR_RESET;
             e_sesja_remisy++;
             e_alltime_remisy++;
         }
     }
     else if (level == 2) {
         if (wygrana_checker(gracz_znaczek)) {
-            std::cout << ANSI_COLOR_GREEN << "Gratulacje! Wygrałeś! :D\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_GREEN << "Congrats! You've won! :D\n" << ANSI_COLOR_RESET;
             t_sesja_wygrane++;
             t_alltime_wygrane++;
         }
         else if (wygrana_checker(komputer_znaczek)) {
-            std::cout << ANSI_COLOR_RED << "Tym razem komputer okazał się lepszy :(\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_RED << "This time the computer was better :(\n" << ANSI_COLOR_RESET;
             t_sesja_przegrane++;
             t_alltime_przegrane++;
         }
         else if (remis_checker()) {
-            std::cout << ANSI_COLOR_YELLOW << "Remis!\n" << ANSI_COLOR_RESET;
+            std::cout << ANSI_COLOR_YELLOW << "Draw!\n" << ANSI_COLOR_RESET;
             t_sesja_remisy++;
             t_alltime_remisy++;
         }
@@ -342,12 +342,12 @@ void gameplay_medium() {
 void stats_viewer() {
     load_alltime_stats();
     system("cls");
-    std::cout << "Wybierz, jakie statystyki chcesz zobaczyć:\n1 - Statystyki bieżącej sesji\n2 - Łączne statystyki wszystkich gier dotychczas\n3 - 1+2\n";
+    std::cout << "What stats would you like to see?:\n1 - Current session stats\n2 - Alltime stats\n3 - 1+2\n";
     int s;
     while (!(std::cin >> s) || s < 1 || s > 3) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Nie ma takich statystyk. Wybierz liczbę od 1 do 3.\n";
+        std::cout << "No such stats exist. Choose a number between 1 and 3.\n";
     }
     if (s == 1) {
         system("cls");
@@ -363,17 +363,17 @@ void stats_viewer() {
         std::cout << std::endl;
         alltime_stats();
     }
-    std::cout << "\nNaciśnij dowolny klawisz, by wrócić do menu.\n";
+    std::cout << "\nPress any key to return to Menu.\n";
     system("pause");
 }
 
 void menu() {
    
     std::string znaczek;
-    std::cout << "Jakim znaczkiem chcesz być? Wybierz x lub o.\n";
+    std::cout << "Which sign would you like to play with? Choose X or O.\n";
     std::cin >> znaczek;
     while (znaczek != "o" && znaczek != "O" && znaczek != "x" && znaczek != "X") {
-        std::cout << "Wpisałeś zły znaczek, spróbuj ponownie!\n";
+        std::cout << "No such sign exists. Choose X or O\n";
         std::cin >> znaczek;
     }
     if (znaczek == "x" || znaczek == "X") {
@@ -387,49 +387,49 @@ void menu() {
         gracz_znaczek = "o";
     }
     std::string czy;
-    std::cout << "\nCzy chcesz wybrać kolor swojego znaczka?\nWciśnij Y, by przejść do wyboru koloru lub N, by kontynować z kolorem domyślnym.\n";
+    std::cout << "\nWould you like to choose a colour for your sign?\nPress Y to go to the colour selection screen or N to continue with the default colour.\n";
     std::cin >> czy;
     while (czy != "n" && czy != "N" && czy != "y" && czy != "Y") {
-        std::cout << "Wciśnij Y, by przejść do wyboru koloru lub N, by kontynuować z kolorem domyślnym.\n";
+        std::cout << "Press Y to go to the colour selection screen or N to continue with the default colour.\n";
         std::cin >> czy;
     }
     if (czy == "y" || czy == "Y") {
         system("cls");
         int kolor;
-        std::cout << "Wybierz kolor:\n";
-        std::cout << ANSI_COLOR_RED << "1 - Czerwony" << ANSI_COLOR_RESET << "\n";
-        std::cout << ANSI_COLOR_GREEN << "2 - Zielony" << ANSI_COLOR_RESET << "\n";
-        std::cout << ANSI_COLOR_YELLOW << "3 - Żółty" << ANSI_COLOR_RESET << "\n";
-        std::cout << ANSI_COLOR_BLUE << "4 - Niebieski" << ANSI_COLOR_RESET << "\n";
+        std::cout << "Choose a colour:\n";
+        std::cout << ANSI_COLOR_RED << "1 - Red" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_GREEN << "2 - Green" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_YELLOW << "3 - Yellow" << ANSI_COLOR_RESET << "\n";
+        std::cout << ANSI_COLOR_BLUE << "4 - Blue" << ANSI_COLOR_RESET << "\n";
         std::cout << ANSI_COLOR_MAGENTA << "5 - Magenta" << ANSI_COLOR_RESET << "\n";
-        std::cout << ANSI_COLOR_CYAN << "6 - Cyjan" << ANSI_COLOR_RESET << "\n";
-        std::cout << "7 - Kolor losowy\n";
+        std::cout << ANSI_COLOR_CYAN << "6 - Cyan" << ANSI_COLOR_RESET << "\n";
+        std::cout << "7 - Random colour\n";
         while (!(std::cin >> kolor) || kolor < 1 || kolor>7) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Nie ma takiego koloru. Wybierz liczbę od 1 do 6.\n";
+            std::cout << "No such colour exists. Choose a number between 1 and 6.\n";
         }
         if (kolor == 7) {
             kolor = rand() & 6 + 1;
         }
         wybierz_kolor(kolor, gracz_znaczek);
-        std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
+        std::cout << "\n Your sign: " << gracz_znaczek << "!\n";
     }
     if (czy == "n" || czy == "N") {
-        std::cout << "\n Twój znaczek to: " << gracz_znaczek << "!\n";
+        std::cout << "\n Your sign: " << gracz_znaczek << "!\n";
     }
-    std::cout << "\nWybierz poziom trudności:\n1 - Łatwy\n2 - Trudny\n";
+    std::cout << "\nChoose the difficulty level:\n1 - Easy\n2 - Hard\n";
     while (!(std::cin >> level) || level != 1 && level != 2) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Nie ma takiego poziomu trudności. Wybierz poprawny numer:\n1 - Łatwy\n2 - Trudny\n";
+        std::cout << "No such level exists. Choose the correct number:\n1 - Easy\n2 - Hard\n";
     }
 
-    std::cout << "\nKto zaczyna? Wybierz odpowiedni numer:\n1 - Ty\n2 - Komputer\n";
+    std::cout << "\nWho shall start the game?\n1 - You\n2 - The computer\n";
     while (!(std::cin >> starter) || starter != 1 && starter != 2) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "\tNie ma takiego gracza. Wybierz poprawny numer:\n1 - Ty\n2 - Komputer\n";
+        std::cout << "\tNo such player exists. Choose the correct number:\n1 - You\n2 - The computer\n";
 
     }
 
@@ -444,16 +444,16 @@ void menu() {
 
     wyniki();
 
-    std::cout << "\nCzy chciałbyś zagrać jeszcze raz? Jeśli tak, wybierz Y.\nJeśli chcesz zakończyć rozgrywkę, wybierz N.\nJeśli chcesz przejść do statystyk, wybiesz S.\n";
+    std::cout << "\nWould you like to play again? If yes, press Y.\nIf you want to finish playing for now, press N.\nIf you want to see the stats, press S.\n";
     std::string tak;
     std::cin >> tak;
     while (tak != "y" && tak != "Y" && tak != "n" && tak != "N" && tak != "S" && tak != "s") {
-        std::cout << "Wybierz Y, jeśli chcesz zagrać jeszcze raz.\nJeśli chcesz przejść do statystyk, wybiesz S.\nJeśli chcesz zakończyć rozgrywkę, wybierz N.\n";
+        std::cout << "Press Y, if you want to play again.\nIf you want to see the stats, press S.\nIf you want to finish playing for now, press N.\n";
         std::cin >> tak;
     }
     if (tak == "n" || tak == "N") {
         system("cls");
-        std::cout << ANSI_COLOR_GREEN<<"\n\n\tDzięki za grę!\n\tDo zobaczenia następnym razem!\n\n"<<ANSI_COLOR_RESET;
+        std::cout << ANSI_COLOR_GREEN<<"\n\n\tThanks for playing!\n\tSee you next time!\n\n"<<ANSI_COLOR_RESET;
         sleep_seconds(1);
         exit(0);
     }
@@ -470,10 +470,10 @@ void menu() {
 void menu_init() {
     system("cls");
     std::string y;
-    std::cout << ANSI_COLOR_MAGENTA<<"Witaj w grze kółko i krzyżyk!"<<ANSI_COLOR_RESET<<"\nWciśnij Y, jeśli możemy zaczynać.\nWciśnij S, żeby zobaczyć statystyki.\nWciśnij N, żeby wyjść z gry.\n";
+    std::cout << ANSI_COLOR_MAGENTA<<"Welcome to Tic-tac-toe!"<<ANSI_COLOR_RESET<<"\nPress Y to start the game.\nPress S to see the stats.\nPress N to leave.\n";
     std::cin >> y;
     while (y != "Y" && y != "y" && y != "s" && y != "S" && y != "n" && y != "N") {
-        std::cout << "Wciśnij Y, jeśli możemy zaczynać.\nWciśnij S, żeby zobaczyć statystyki.\nWciśnij N, żeby wyjść z gry.\n";
+        std::cout << "Press Y to start the game.\nPress S to see the stats.\nPress N to leave.\n";
         std::cin >> y;
     }
     if (y == "Y" || y == "y") {
@@ -485,7 +485,7 @@ void menu_init() {
     }
     else if (y == "n" || y == "N") {
         system("cls");
-        std::cout << ANSI_COLOR_GREEN << "\n\n\tDo zobaczenia następnym razem!\n\n" << ANSI_COLOR_RESET;
+        std::cout << ANSI_COLOR_GREEN << "\n\n\tSee you next time!\n\n" << ANSI_COLOR_RESET;
         sleep_seconds(1);
         exit(0);
     }
