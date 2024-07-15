@@ -1,5 +1,6 @@
 # Tic-tac-toe
 A simple CLI game to remind myslef how to use C++.
+
 Features:
  - 2 difficulty levels;
  - stats;
