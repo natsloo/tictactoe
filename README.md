@@ -5,4 +5,5 @@ Features:
  - stats;
  - console colours.
 
-![image](https://github.com/user-attachments/assets/1573863b-1b4b-4ab1-9b20-2b1ad8ba493c)
+![image](https://github.com/user-attachments/assets/91615c2d-071c-4b70-ab23-a2b7ec92c6e0)
+
